@@ -21,6 +21,7 @@ const (
 type Lexer struct {
 	S      []rune
 	Cursor int
+	Tokens *[]Token
 }
 
 type Token struct {
@@ -28,20 +29,19 @@ type Token struct {
 	Value string
 }
 
-func (l Lexer) RunLexer() ([]Token, error) {
-	var tokens = make([]Token, 0)
+func (l Lexer) RunLexer() error {
 	token, err := l.getNextToken()
 	if err != nil {
-		return []Token{}, err
+		return err
 	}
 	for token.Type != EOF {
-		tokens = append(tokens, token)
+		*l.Tokens = append(*l.Tokens, token)
 		token, err = l.getNextToken()
 		if err != nil {
-			return []Token{}, err
+			return err
 		}
 	}
-	return tokens, nil
+	return nil
 }
 
 func (l *Lexer) getNextToken() (Token, error) {
